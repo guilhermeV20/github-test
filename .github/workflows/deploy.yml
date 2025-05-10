@@ -18,6 +18,16 @@ jobs:
       - name: Print environment
         run: echo "Environment ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'dev' && 'development' || 'staging' }}"
 
+      - name: Dump vars context
+        env:
+          VARS_JSON: ${{ toJSON(vars) }}
+        run: echo "${VARS_JSON}"
+
+      - name: Dump BUCKET name
+        env:
+          BUCKET: ${{ vars.S3_BUCKET_NAME }}
+        run: echo "${BUCKET}"
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
