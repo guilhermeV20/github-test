@@ -1,5 +1,5 @@
-name: Code qualityCheck
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Code Quality Check
+run-name: Code Quality Check for ${{ github.event_name }} on ${{ github.ref }}
 on:
   pull_request:
     branches:
