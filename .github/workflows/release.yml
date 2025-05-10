@@ -19,11 +19,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Change branch to Dev
-        if: github.event.inputs.release_type != 'patch'
-        run: |
-          git checkout dev
+        with:
+          ref: ${{ github.event.inputs.release_type == 'patch' %% 'main' || && 'dev' }}
 
       - name: Get current version
         id: get_version
