@@ -1,0 +1,71 @@
+name: Create Release
+run-name: Create ${{ github.event.inputs.release_type }} release by @${{ github.actor }}
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        default: 'patch'
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Change branch to Dev
+        if: github.event.inputs.release_type != 'patch'
+        run: |
+          git checkout dev
+
+      - name: Get current version
+        id: get_version
+        run: |
+          version=$(grep -oP '(?<=version:\s)[0-9]+\.[0-9]+\.[0-9]+' pubspec.yaml)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          version=${{ steps.get_version.outputs.version }}
+          IFS='.' read -r major minor patch <<< "$version"
+          case "${{ github.event.inputs.release_type }}" in
+            major)
+              major=$((major + 1))
+              minor=0
+              patch=0
+              ;;
+            minor)
+              minor=$((minor + 1))
+              patch=0
+              ;;
+            patch)
+              patch=$((patch + 1))
+              ;;
+          esac
+          new_version="$major.$minor.$patch"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+
+      - name: Update pubspec.yaml
+        run: |
+          new_version=${{ steps.bump_version.outputs.new_version }}
+          sed -i "s/version: .*/version: $new_version/" pubspec.yaml
+      
+      - name: Commit changes
+        run: |
+          git add pubspec.yaml
+          git commit -m "Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git push
+
+      - name: Create GitHub release
+        run: |
+          git checkout -b release/${{ steps.bump_version.outputs.new_version }}
+          git push origin release/${{ steps.bump_version.outputs.new_version }}
+
