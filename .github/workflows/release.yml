@@ -7,7 +7,7 @@ on:
         description: 'Release type'
         required: true
         type: choice
-        default: 'patch'
+        default: 'minor'
         options:
           - 'major'
           - 'minor'
@@ -55,6 +55,11 @@ jobs:
           new_version=${{ steps.bump_version.outputs.new_version }}
           sed -i "s/version: .*/version: $new_version/" pubspec.yaml
       
+      - name: Configure Git
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+
       - name: Commit changes
         run: |
           git add pubspec.yaml
