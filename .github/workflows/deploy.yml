@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy for ${{ github.event_name }} on ${{ github.ref }}
+run-name: Deploy on ${{ github.head_ref }} for ${{ github.event.pull_request.title }}
 on:
   push:
     branches:
