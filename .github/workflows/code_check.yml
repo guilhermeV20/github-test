@@ -1,5 +1,5 @@
-name: Code Quality Check
-run-name: Code Quality Check for ${{ github.event_name }} on ${{ github.ref }}
+name: Code Check
+run-name: Code Check for ${{ github.head_ref }}
 on:
   pull_request:
     branches:
