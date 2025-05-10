@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy on ${{ github.head_ref }} for ${{ github.event.pull_request.title }}
+run-name: Deploy on ${{ github.ref_name }}
 on:
   push:
     branches:
@@ -15,9 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Print GitHub context
-        run: echo "${{ toJson(github) }}"
-        
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
