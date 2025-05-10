@@ -10,7 +10,7 @@ on:
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
-    environment: ${ github.ref_name == 'main' && 'production' || github.ref_name == 'dev' && 'development' || 'staging' }
+    environment: development
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
